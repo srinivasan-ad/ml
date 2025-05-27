@@ -1,0 +1,18 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.model_selection import train_test_split
+from sklearn.cluster import KMeans
+print("\n--- K-Means Clustering ---")
+data = load_breast_cancer()
+X = data.data
+model = KMeans(n_clusters=2, n_init=10)
+model.fit(X)
+labels = model.labels_
+plt.scatter(X[:, 0], X[:, 1], c=labels)
+--- K-Means Clustering ---
+plt.title('K-Means Clustering - Breast Cancer')
+plt.xlabel('Feature 1')
+plt.ylabel('Feature 2')
+plt.show()

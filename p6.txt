@@ -1,0 +1,22 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.model_selection import train_test_split
+print("\n--- Locally Weighted Regression ---")
+def kernel(x, xi, tau):
+ return np.exp(-np.sum((x - xi) ** 2) / (2 * tau ** 2))
+def predict_lwr(x, X, y, tau=0.5):
+ W = np.array([kernel(x, xi, tau) for xi in X])
+ W = np.diag(W)
+ theta = np.linalg.pinv(X.T @ W @ X) @ X.T @ W @ y
+ return x @ theta
+X = np.linspace(1, 10, 100).reshape(-1, 1)
+y = np.sin(X).ravel()
+X_ = np.c_[np.ones(X.shape[0]), X]
+preds = [predict_lwr(xi, X_, y) for xi in X_]
+plt.plot(X, y, label='Original')
+plt.plot(X, preds, label='LWR', color='r')
+plt.legend()
+plt.title('Locally Weighted Regression')
+plt.show()

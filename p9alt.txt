@@ -1,0 +1,36 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.model_selection import train_test_split
+from sklearn.datasets import fetch_olivetti_faces
+from sklearn.naive_bayes import GaussianNB
+from sklearn.metrics import accuracy_score
+data = fetch_olivetti_faces()
+data.keys()
+def print_faces(images, target, top_n):
+ # Ensure the number of images does not exceed available data
+ top_n = min(top_n, len(images))
+ # Set up figure size based on the number of images
+ grid_size = int(np.ceil(np.sqrt(top_n)))
+ fig, axes = plt.subplots(grid_size, grid_size, figsize=(15, 15))
+ fig.subplots_adjust(left=0, right=1, bottom=0, top=1, hspace=0.2, wspace=0.2)
+ for i, ax in enumerate(axes.ravel()):
+ if i < top_n:
+ ax.imshow(images[i], cmap='bone')
+ ax.axis('off')
+ ax.text(2, 12, str(target[i]), fontsize=9, color='red')
+ ax.text(2, 55, f"face: {i}", fontsize=9, color='blue')
+ else:
+ ax.axis('off')
+ plt.show()
+print_faces(data.images,data.target,10)
+
+print("\n--- Naive Bayes - Olivetti Faces ---")
+faces = fetch_olivetti_faces()
+X, y = faces.data, faces.target
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+model = GaussianNB()
+model.fit(X_train, y_train)
+y_pred = model.predict(X_test)
+print("Accuracy:", accuracy_score(y_test, y_pred))

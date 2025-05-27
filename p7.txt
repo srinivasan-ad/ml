@@ -1,0 +1,67 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
+# Load and clean data
+df = sns.load_dataset("mpg").dropna(subset=['horsepower', 'mpg'])
+X_train, X_test, y_train, y_test = train_test_split(df[['horsepower']], df['mpg'], test_size=0.2,
+ random_state=42)
+# Fit polynomial regression model
+degree = 2
+poly = PolynomialFeatures(degree).fit(X_train)
+model = LinearRegression().fit(poly.transform(X_train), y_train)
+# Predict and plot
+X_range = np.linspace(df['horsepower'].min(), df['horsepower'].max(), 200).reshape(-1, 1)
+y_range_pred = model.predict(poly.transform(X_range))
+plt.figure(figsize=(8, 5))
+plt.scatter(df['horsepower'], df['mpg'], color='blue', alpha=0.6, label='Data')
+plt.plot(X_range, y_range_pred, color='red', label='Polynomial Fit')
+plt.xlabel('Horsepower')
+plt.ylabel('MPG')
+plt.title(f'Polynomial Regression (degree {degree})')
+plt.legend()
+plt.grid(True)
+plt.tight_layout()
+plt.show()
+
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error, r2_score
+# Load dataset
+data = pd.read_csv(r"C:\Users\PAVITHRA H R\Downloads\Boston housing dataset.csv")
+# Check for NaN values and handle them
+Data contains NaN values. Filling NaNs with column means.
+MSE: 25.02, RMSE: 5.00, R²: 0.66
+if data.isnull().values.any():
+ print("Data contains NaN values. Filling NaNs with column means.")
+ data.fillna(data.mean(), inplace=True) # Fill NaNs with column means
+# Define features and target
+X, y = data.drop(columns='MEDV'), data['MEDV']
+# Standardize features and split data
+X_scaled = StandardScaler().fit_transform(X)
+X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2,
+ random_state=42)
+# Train model and predict
+model = LinearRegression().fit(X_train, y_train)
+y_pred = model.predict(X_test)
+# Evaluate and display metrics
+print(f"MSE: {mean_squared_error(y_test, y_pred):.2f}, RMSE: {np.sqrt(mean_squared_error
+(y_test, y_pred)):.2f}, R²: {r2_score(y_test, y_pred):.2f}")
+# Plot actual vs predicted
+plt.figure(figsize=(8, 6))
+plt.scatter(y_test, y_pred, color='blue', alpha=0.6, edgecolors="k", s=80)
+plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], color='red',
+ linestyle='--')
+plt.title('Linear Regression: Actual vs Predicted')
+plt.xlabel('Actual MEDV')
+plt.ylabel('Predicted MEDV')
+plt.grid(True)
+plt.tight_layout()
+plt.show()
