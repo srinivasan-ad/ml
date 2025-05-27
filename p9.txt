@@ -1,41 +1,22 @@
-import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.datasets import fetch_olivetti_faces
-from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import GaussianNB
 from sklearn.metrics import accuracy_score
+from sklearn.model_selection import train_test_split
 
-# Function to display faces with labels
-def show_faces(images, labels, num_faces):
-    num_faces = min(num_faces, len(images))
-    grid = int(np.ceil(np.sqrt(num_faces)))
-    fig, axes = plt.subplots(grid, grid, figsize=(12, 12))
-    for i, ax in enumerate(axes.flat):
-        if i < num_faces:
-            ax.imshow(images[i], cmap='bone')
-            ax.axis('off')
-            ax.set_title(f"ID: {labels[i]}", color='red', fontsize=10)
-        else:
-            ax.axis('off')
-    plt.show()
-
-# Load dataset
 faces = fetch_olivetti_faces()
-X = faces.data      # Flattened face images as input features
-y = faces.target    # Labels (person IDs)
-
-# Show first 10 faces with labels
-show_faces(faces.images, y, 10)
-
-print("\n--- Naive Bayes - Olivetti Faces ---")
-
-# Split data into train/test
+X, y = faces.data, faces.target
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# Train Gaussian Naive Bayes model
 model = GaussianNB()
 model.fit(X_train, y_train)
+print("Accuracy: ", accuracy_score(y_test, model.predict(X_test)))
 
-# Predict and evaluate accuracy
-y_pred = model.predict(X_test)
-print("Accuracy:", accuracy_score(y_test, y_pred))
+plt.figure(figsize=(12,15))
+for i in range(20):
+    plt.subplot(5, 4, i + 1)
+    plt.imshow(faces.images[i], cmap="bone")
+    plt.title(f"Label: {faces.target[i]}")
+    plt.axis("off")
+plt.tight_layout()
+plt.show()
