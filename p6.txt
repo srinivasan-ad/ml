@@ -1,30 +1,40 @@
-import numpy as np
-import matplotlib.pyplot as plt
+wget -O - https://get.sdkman.io | bash
+source "$HOME/.sdkman/bin/sdkman-init.sh" 
+mkdir helloGradle
+cd helloGradle 
+gradle init --type java-application
+kts folder
+task hello {
+    doLast {
+        println 'Hello, Gradle!'
+    }
+}
 
-print("\n--- Locally Weighted Regression ---")
+./gradlew clean
+./gradlew build
+./gradlew run
+./gradlew hello
 
-def kernel(x, xi, tau):
-  return np.exp(-np.sum((x-xi) ** 2) / (2 * tau ** 2))
 
-def predict_lwr(x, X, y, tau=0.5):
-  W = np.array([kernel(x, xi, tau) for xi in X])
-  W = np.diag(W)
-  # theta
-  theta = np.linalg.pinv(X.T @ W @ X) @ X.T @ W @ y
-  return x @ theta
+for groovy rename build.kts remove kts and same for settings.kts
 
-# Data
-X = np.linspace(1, 10, 100).reshape(-1, 1)
-y = np.sin(X).ravel()
+then in build pase this 
+plugins {
+    id 'application'
+}
 
-X_ = np.c_[np.ones(X.shape[0]), X]
+dependencies {
+    implementation libs.guava
+    testImplementation libs.junit.jupiter
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
 
-preds = [predict_lwr(xi, X_, y, tau=0.5) for xi in X_]
+application {
+    mainClass = 'org.example.App'
+}
 
-plt.plot(X, y, label="Original Sin(x)")
-plt.plot(X, preds, label="Locally Weighted Regression", color="red")
-plt.legend()
-plt.title("Locally Weighted Regression")
-plt.xlabel("x")
-plt.ylabel("y")
-plt.show()
+tasks.register('hello') {
+    doLast {
+        println 'Hello, Gradle!'
+    }
+}

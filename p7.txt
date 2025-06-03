@@ -1,67 +1,94 @@
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
-from sklearn.preprocessing import PolynomialFeatures
-from sklearn.linear_model import LinearRegression
-from sklearn.model_selection import train_test_split
-# Load and clean data
-df = sns.load_dataset("mpg").dropna(subset=['horsepower', 'mpg'])
-X_train, X_test, y_train, y_test = train_test_split(df[['horsepower']], df['mpg'], test_size=0.2,
- random_state=42)
-# Fit polynomial regression model
-degree = 2
-poly = PolynomialFeatures(degree).fit(X_train)
-model = LinearRegression().fit(poly.transform(X_train), y_train)
-# Predict and plot
-X_range = np.linspace(df['horsepower'].min(), df['horsepower'].max(), 200).reshape(-1, 1)
-y_range_pred = model.predict(poly.transform(X_range))
-plt.figure(figsize=(8, 5))
-plt.scatter(df['horsepower'], df['mpg'], color='blue', alpha=0.6, label='Data')
-plt.plot(X_range, y_range_pred, color='red', label='Polynomial Fit')
-plt.xlabel('Horsepower')
-plt.ylabel('MPG')
-plt.title(f'Polynomial Regression (degree {degree})')
-plt.legend()
-plt.grid(True)
-plt.tight_layout()
-plt.show()
+wget -O - https://get.sdkman.io | bash
+source "$HOME/.sdkman/bin/sdkman-init.sh" 
+ sdk install maven 
+sdk install gradle
+mvn archetype:generate -DgroupId=com.example -DartifactId=MyMavenApp -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false
+nano pom.xml
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.example</groupId>
+  <artifactId>MyMavenApp</artifactId>
+  <packaging>jar</packaging>
+  <version>1.0-SNAPSHOT</version>
+  <name>MyMavenApp</name>
+  <url>http://maven.apache.org</url>
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+<build>
+  <plugins>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-compiler-plugin</artifactId>
+      <version>3.10.1</version>
+      <configuration>
+        <source>17</source>
+        <target>17</target>
+      </configuration>
+    </plugin>
+  </plugins>
+</build>
+</project>
+mvn compile
+mvn test
+mvn package
+
+java -cp target/MyMavenApp-1.0-SNAPSHOT.jar com.example.Ap
 
 
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-from sklearn.preprocessing import StandardScaler
-from sklearn.linear_model import LinearRegression
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_squared_error, r2_score
-# Load dataset
-data = pd.read_csv(r"C:\Users\PAVITHRA H R\Downloads\Boston housing dataset.csv")
-# Check for NaN values and handle them
-Data contains NaN values. Filling NaNs with column means.
-MSE: 25.02, RMSE: 5.00, R²: 0.66
-if data.isnull().values.any():
- print("Data contains NaN values. Filling NaNs with column means.")
- data.fillna(data.mean(), inplace=True) # Fill NaNs with column means
-# Define features and target
-X, y = data.drop(columns='MEDV'), data['MEDV']
-# Standardize features and split data
-X_scaled = StandardScaler().fit_transform(X)
-X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2,
- random_state=42)
-# Train model and predict
-model = LinearRegression().fit(X_train, y_train)
-y_pred = model.predict(X_test)
-# Evaluate and display metrics
-print(f"MSE: {mean_squared_error(y_test, y_pred):.2f}, RMSE: {np.sqrt(mean_squared_error
-(y_test, y_pred)):.2f}, R²: {r2_score(y_test, y_pred):.2f}")
-# Plot actual vs predicted
-plt.figure(figsize=(8, 6))
-plt.scatter(y_test, y_pred, color='blue', alpha=0.6, edgecolors="k", s=80)
-plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], color='red',
- linestyle='--')
-plt.title('Linear Regression: Actual vs Predicted')
-plt.xlabel('Actual MEDV')
-plt.ylabel('Predicted MEDV')
-plt.grid(True)
-plt.tight_layout()
-plt.show()
+wget -O - https://get.sdkman.io | bash
+source "$HOME/.sdkman/bin/sdkman-init.sh" 
+mkdir helloGradle
+cd helloGradle 
+gradle init --type java-application
+kts folder
+task hello {
+    doLast {
+        println 'Hello, Gradle!'
+    }
+}
+
+./gradlew clean
+./gradlew build
+./gradlew run
+./gradlew hello
+
+
+for groovy rename build.kts remove kts and same for settings.kts
+
+then in build pase this 
+plugins {
+    id 'application'
+}
+
+dependencies {
+    implementation libs.guava
+    testImplementation libs.junit.jupiter
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+application {
+    mainClass = 'org.example.App'
+}
+
+tasks.register('hello') {
+    doLast {
+        println 'Hello, Gradle!'
+    }
+}
+
+
+
+mkdir -p ~/mvntest/HelloMavenGradle/app/src/main/java/com/example
+mkdir -p ~/mvntest/HelloMavenGradle/app/src/test/java/com/example
+
+cp ~/mvntest/MyMavenApp/src/main/java/com/example/App.java ~/mvntest/HelloMavenGradle/app/src/main/java/com/example/
+cp ~/mvntest/MyMavenApp/src/test/java/com/example/AppTest.java ~/mvntest/HelloMavenGradle/app/src/test/java/com/example/
+./gradlew clean build
+./gradlew run

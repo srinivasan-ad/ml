@@ -1,22 +1,86 @@
-import matplotlib.pyplot as plt
-from sklearn.datasets import fetch_olivetti_faces
-from sklearn.naive_bayes import GaussianNB
-from sklearn.metrics import accuracy_score
-from sklearn.model_selection import train_test_split
+Step 1: Prepare your Gradle project for Jenkins
+Make sure you have these files:
 
-faces = fetch_olivetti_faces()
-X, y = faces.data, faces.target
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+build.gradle — your Gradle build script
 
-model = GaussianNB()
-model.fit(X_train, y_train)
-print("Accuracy: ", accuracy_score(y_test, model.predict(X_test)))
+gradlew and gradlew.bat — Gradle wrapper scripts (optional but recommended, so Jenkins can build without installing Gradle globally)
 
-plt.figure(figsize=(12,15))
-for i in range(20):
-    plt.subplot(5, 4, i + 1)
-    plt.imshow(faces.images[i], cmap="bone")
-    plt.title(f"Label: {faces.target[i]}")
-    plt.axis("off")
-plt.tight_layout()
-plt.show()
+Jenkinsfile — pipeline definition file
+
+Step 2: Sample Jenkinsfile
+Create a file named Jenkinsfile in your project root with this minimal pipeline:
+
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                // Checkout your Git repo
+                checkout scm
+            }
+        }
+
+        stage('Build') {
+            steps {
+                // Use Gradle wrapper to build
+                sh './gradlew clean build'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                // Run tests
+                sh './gradlew test'
+            }
+        }
+    }
+
+    post {
+        always {
+            // Archive test results (optional)
+            junit '**/build/test-results/test/*.xml'
+        }
+    }
+}
+
+Step 3: Push your project to a Git repository
+Initialize Git in your project folder if not done:
+
+bash
+Copy
+Edit
+git init
+git add .
+git commit -m "Initial commit"
+Push to GitHub or another Git service:
+
+bash
+Copy
+Edit
+git remote add origin https://github.com/yourusername/yourrepo.git
+git push -u origin master
+Step 4: Create Jenkins job
+Open Jenkins in your browser.
+
+Click New Item, name it, choose Pipeline.
+
+Under Pipeline section, select Pipeline script from SCM.
+
+Choose Git, and enter your repo URL.
+
+Set branch (e.g., master or main).
+
+Jenkins will look for Jenkinsfile in the root.
+
+Save and run the job.
+
+Step 5: Watch your pipeline run!
+Jenkins will:
+
+Clone your repo
+
+Run ./gradlew clean build (build + compile)
+
+Run ./gradlew test (execute tests)
+

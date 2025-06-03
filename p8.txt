@@ -1,17 +1,13 @@
-from sklearn.datasets import load_breast_cancer
-from sklearn.tree import DecisionTreeClassifier, plot_tree
-import matplotlib.pyplot as plt
+sudo wget -O /etc/apt/keyrings/jenkins-keyring.asc \
+  https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
+echo "deb [signed-by=/etc/apt/keyrings/jenkins-keyring.asc]" \
+  https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
+  /etc/apt/sources.list.d/jenkins.list > /dev/null
+sudo apt-get update
+sudo apt-get install jenkins
+sudo apt install openjdk-21-jdk
 
-data = load_breast_cancer()
+sudo update-alternatives --config java
 
-X, y = data.data, data.target
-model = DecisionTreeClassifier()
-model.fit(X,y)
-
-acc = model.score(X, y)
-print("Accuracy: ", acc)
-
-plt.figure(figsize=(10,5))
-plot_tree(model,filled=True,feature_names=data.feature_names, class_names=data.target_names)
-plt.title("Decision Tree - Breast Cancer")
-plt.show()
+ sudo systemctl restart jenkins\nsudo systemctl status jenkins\n 
+ sudo cat /var/lib/jenkins/secrets/initialAdminPassword\n 
