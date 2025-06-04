@@ -1,4 +1,18 @@
 # 1. Create a Jenkins Job
+
+sudo wget -O - /etc/apt/keyrings/jenkins-keyring.asc \
+  https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
+echo "deb [signed-by=/etc/apt/keyrings/jenkins-keyring.asc]" \
+  https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
+  /etc/apt/sources.list.d/jenkins.list > /dev/null
+sudo apt-get update
+sudo apt-get install jenkins
+sudo apt install openjdk-21-jdk
+
+sudo update-alternatives --config java
+
+ sudo systemctl restart jenkins\nsudo systemctl status jenkins\n 
+ sudo cat /var/lib/jenkins/secrets/initialAdminPassword\n 
 - Open Jenkins at http://localhost:8080
 - Click “New Item”
 - Name it: Gradle-CI
