@@ -1,86 +1,81 @@
-Step 1: Prepare your Gradle project for Jenkins
-Make sure you have these files:
-
-build.gradle — your Gradle build script
-
-gradlew and gradlew.bat — Gradle wrapper scripts (optional but recommended, so Jenkins can build without installing Gradle globally)
-
-Jenkinsfile — pipeline definition file
-
-Step 2: Sample Jenkinsfile
-Create a file named Jenkinsfile in your project root with this minimal pipeline:
-
-pipeline {
-    agent any
-
-    stages {
-        stage('Checkout') {
-            steps {
-                // Checkout your Git repo
-                checkout scm
-            }
-        }
-
-        stage('Build') {
-            steps {
-                // Use Gradle wrapper to build
-                sh './gradlew clean build'
-            }
-        }
-
-        stage('Test') {
-            steps {
-                // Run tests
-                sh './gradlew test'
-            }
-        }
+# 1. Create a Jenkins Job
+- Open Jenkins at http://localhost:8080
+- Click “New Item”
+- Name it: Gradle-CI
+- Select “Freestyle project” → Click OK
+In gradle build file 
+tasks.register("hello")
+{
+    doLast{
+        println "Hello from Gradle"
     }
-
-    post {
-        always {
-            // Archive test results (optional)
-            junit '**/build/test-results/test/*.xml'
-        }
+}
+test {
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+}
+test {
+    useJUnit() // Optional, for clarity with JUnit 4
+    reports {
+        junitXml.required = true
+        html.required = true
     }
 }
 
-Step 3: Push your project to a Git repository
-Initialize Git in your project folder if not done:
+# 2. Configure Source Code Management
+- In job config → “Source Code Management” → Select “Git”
+- Enter your repo URL (e.g. https://github.com/yourusername/your-gradle-project.git)
+- Branch Specifier: */main (or whichever)
 
-bash
-Copy
-Edit
-git init
-git add .
-git commit -m "Initial commit"
-Push to GitHub or another Git service:
+# 3. Add Build Step (Gradle)
+- Scroll to “Build” → “Add build step” → “Invoke Gradle script”
+- Tasks: clean build
 
-bash
-Copy
-Edit
-git remote add origin https://github.com/yourusername/yourrepo.git
-git push -u origin master
-Step 4: Create Jenkins job
-Open Jenkins in your browser.
+# 4. Post-build Actions
+- “Add post-build action” → “Publish JUnit test result report”
+- Test Report XMLs: app/build/test-results/test/*.xml
 
-Click New Item, name it, choose Pipeline.
+# 5. Save & Run
+- Click “Save”
+- Go to job → Click “Build Now”
+- Click build number → View “Console Output” to check logs
 
-Under Pipeline section, select Pipeline script from SCM.
+# 6. Jenkinsfile Pipeline (optional alternative)
 
-Choose Git, and enter your repo URL.
+# File: Jenkinsfile (place this in your GitHub repo root)
 
-Set branch (e.g., master or main).
+pipeline {
+  agent any
+  stages {
+    stage('Checkout') {
+      steps {
+        git url: 'https://github.com/srinivasan-ad/jenkins.git', branch: 'main'
+      }
+    }
+    stage('Build') {
+      steps {
+        sh './gradlew clean build'
+      }
+    }
+    stage('Test') {
+      steps {
+        sh './gradlew test'
+      }
+    }
+  }
+  post {
+    always {
+      junit 'app/build/test-results/test/*.xml'
+    }
+    success {
+      echo 'Build and tests succeeded!'
+    }
+    failure {
+      echo 'Build or tests failed.'
+    }
+  }
+}
 
-Jenkins will look for Jenkinsfile in the root.
-
-Save and run the job.
-
-Step 5: Watch your pipeline run!
-Jenkins will:
-
-Clone your repo
-
-Run ./gradlew clean build (build + compile)
-
-Run ./gradlew test (execute tests)
-
+# Jenkins Dashboard → New Item → “Pipeline” → Paste this in the Pipeline script section
+# Save → Build Now

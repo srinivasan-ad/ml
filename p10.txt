@@ -1,18 +1,33 @@
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
-from sklearn.model_selection import train_test_split
-from sklearn.cluster import KMeans
-print("\n--- K-Means Clustering ---")
-data = load_breast_cancer()
-X = data.data
-model = KMeans(n_clusters=2, n_init=10)
-model.fit(X)
-labels = model.labels_
-plt.scatter(X[:, 0], X[:, 1], c=labels)
---- K-Means Clustering ---
-plt.title('K-Means Clustering - Breast Cancer')
-plt.xlabel('Feature 1')
-plt.ylabel('Feature 2')
-plt.show()
+# 1. Update and Upgrade the System
+sudo apt update
+sudo apt upgrade -y
+
+# 2. Install Ansible
+sudo apt install ansible -y
+ansible --version
+
+# 3. Create Ansible Inventory
+nano hosts.ini
+# Add:
+[local]
+localhost ansible_connection=local
+
+
+# 5. Basic Playbook Example: Installing curl
+# File: setup.yml
+---
+- name: Basic Server Setup
+  hosts: local
+  become: yes
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Install curl
+      apt:
+        name: curl
+        state: present
+
+# 6. Run the Playbook
+ansible-playbook -i hosts.ini setup.yml

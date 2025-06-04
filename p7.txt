@@ -92,3 +92,44 @@ cp ~/mvntest/MyMavenApp/src/main/java/com/example/App.java ~/mvntest/HelloMavenG
 cp ~/mvntest/MyMavenApp/src/test/java/com/example/AppTest.java ~/mvntest/HelloMavenGradle/app/src/test/java/com/example/
 ./gradlew clean build
 ./gradlew run
+
+
+script
+#!/bin/bash
+
+# Part A: Maven Project
+echo "=== Creating Maven project ==="
+mvn archetype:generate -DgroupId=com.example -DartifactId=HelloMaven \
+  -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false
+
+cd HelloMaven
+echo "=== Building Maven project ==="
+mvn package
+
+echo "=== Running Maven app ==="
+java -cp target/HelloMaven-1.0-SNAPSHOT.jar com.example.App
+
+cd ..
+
+# Part B: Gradle Project
+echo "=== Creating Gradle project ==="
+mkdir HelloMavenGradle
+cd HelloMavenGradle
+gradle init --type java-application --dsl groovy --test-framework junit --project-name HelloMavenGradle --package com.example --no-split-project
+
+echo "=== Setting up Gradle project structure ==="
+mkdir -p src/main/java/com/example
+mkdir -p src/test/java/com/example
+
+echo "=== Copying source files ==="
+cp ../HelloMaven/src/main/java/com/example/App.java src/main/java/com/example/
+cp ../HelloMaven/src/test/java/com/example/AppTest.java src/test/java/com/example/
+
+echo "=== Updating build.gradle ==="
+sed -i '/application {/a \ \ \ \ mainClass = "com.example.App"' build.gradle
+
+echo "=== Building Gradle project ==="
+gradle build
+
+echo "=== Running Gradle app ==="
+gradle run

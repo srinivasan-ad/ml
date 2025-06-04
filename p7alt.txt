@@ -1,0 +1,81 @@
+wget -O - https://get.sdkman.io | bash
+source "$HOME/.sdkman/bin/sdkman-init.sh" 
+# 1. Create Maven project
+mvn archetype:generate -DgroupId=com.example -DartifactId=HelloMaven -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false
+
+# 2. Move into project directory
+cd HelloMaven
+
+# 3. Build project
+mvn package
+
+# 4. Run the application
+java -cp target/HelloMaven-1.0-SNAPSHOT.jar com.example.App
+
+
+
+# 1. Create Gradle project
+mkdir HelloMavenGradle
+cd HelloMavenGradle
+gradle init --type java-application
+
+# 2. Prepare package structure
+mkdir -p src/main/java/com/example
+mkdir -p src/test/java/com/example
+
+# 3. Copy source files from Maven project
+cp ../HelloMaven/src/main/java/com/example/App.java src/main/java/com/example/
+cp ../HelloMaven/src/test/java/com/example/AppTest.java src/test/java/com/example/
+
+# 4. Edit build.gradle to set mainClass (run this to edit)
+nano build.gradle
+# Inside `application` block, ensure:
+# mainClass = 'com.example.App'
+
+# 5. Build project
+gradle build
+
+# 6. Run application
+gradle run
+
+
+script
+
+#!/bin/bash
+
+# Part A: Maven Project
+echo "=== Creating Maven project ==="
+mvn archetype:generate -DgroupId=com.example -DartifactId=HelloMaven \
+  -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false
+
+cd HelloMaven
+echo "=== Building Maven project ==="
+mvn package
+
+echo "=== Running Maven app ==="
+java -cp target/HelloMaven-1.0-SNAPSHOT.jar com.example.App
+
+cd ..
+
+# Part B: Gradle Project
+echo "=== Creating Gradle project ==="
+mkdir HelloMavenGradle
+cd HelloMavenGradle
+gradle init --type java-application --dsl groovy --test-framework junit --project-name HelloMavenGradle --package com.example --no-split-project
+
+echo "=== Setting up Gradle project structure ==="
+mkdir -p src/main/java/com/example
+mkdir -p src/test/java/com/example
+
+echo "=== Copying source files ==="
+cp ../HelloMaven/src/main/java/com/example/App.java src/main/java/com/example/
+cp ../HelloMaven/src/test/java/com/example/AppTest.java src/test/java/com/example/
+
+echo "=== Updating build.gradle ==="
+sed -i '/application {/a \ \ \ \ mainClass = "com.example.App"' build.gradle
+
+echo "=== Building Gradle project ==="
+gradle build
+
+echo "=== Running Gradle app ==="
+gradle run
